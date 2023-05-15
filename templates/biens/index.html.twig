@@ -1,0 +1,71 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Affichage de vos biens{% endblock %}
+
+{% block body %}
+<div class="container my-4">
+    <h1>Gérer vos biens</h1>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Numéro</th>
+                <th>Titre</th>
+                <th>Actions</th>
+                <th>Date de création</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for bien in biens %}
+            <tr>
+                <td>{{ bien.id }}</td>
+                <td><a href="{{ path('biens.detail', {id: bien.id}) }}"> {{ bien.nom }} </a></td>
+                <td>
+                    {% if is_granted('ROLE_PROPRIO') %}
+                        <a href="{{ path('biens.edit', {id: bien.id}) }}" class="btn btn-primary"><i class="fa-solid fa-user-pen"></i> Editer</a>
+                    {% endif %}
+                    <form method="post" action="{{ path('biens.delete', {id: bien.id}) }}" class="d-inline-block"
+                          onsubmit='return confirm("Voulez-vous vraiment supprimer \"{{ bien.nom }}\"?")'>
+                        <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ bien.id) }}"/>
+                        <button class="btn btn-danger"><i class="fa-solid fa-trash-can"></i> Supprimer</button>
+                    </form>
+                </td>
+                <td>{{ bien.dateCreation | date('d/m/Y à H:i:s') }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <nav aria-label="Page navigation example">
+        <ul class="pagination">
+            {% if page != 1 %}
+                <li class="page-item">
+                    <a class="page-link" href="{{ path('biens', {page: page-1}) }}" aria-label="Previous"><span aria-hidden="true">&laquo;</span></a>
+                </li>
+            {% endif %}
+            {% if page == 1 %}
+                <li class="page-item">
+                    <a class="page-link disabled" href="#"><span aria-hidden="true">&laquo;</span></a>
+                </li>
+            {% endif %}
+            {% for i in range(1, nbrePage) %}
+                <li class="page-item {% if page==i %}active{% endif %}"><a class="page-link" href="{{ path('biens', {page: i}) }}">{{ i }}</a></li>
+            {% endfor %}
+
+            {% if page == nbrePage %}
+                <li class="page-item">
+                    <a class="page-link disabled" href="#"><span aria-hidden="true">&raquo;</span></a>
+                </li>
+            {% endif %}
+            {% if page != nbrePage %}
+                <li class="page-item">
+                    <a class="page-link" href="{{ path('biens', {page: page+1}) }}" aria-label="Next"><span aria-hidden="true">&raquo;</span></a>
+                </li>
+            {% endif %}
+        </ul>
+    </nav>
+    {% if is_granted('ROLE_PROPRIO') %}
+        <div class="text-end">
+            <a href="{{ path('biens.create') }}" class="btn btn-primary w-50"> Créer un nouveau bien </a>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

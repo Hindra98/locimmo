@@ -1,0 +1,51 @@
+{% extends 'base.html.twig' %}
+
+{% block title %} Favori - {{ user.nom }} {% endblock %}
+
+{% block body %}
+    <div class="container-md mx-auto ">
+        <div class="card mx-auto">
+            <div class="card-header">
+                <h4 class="mb-3 fw-bold text-center"> Inbox </h4>
+            </div>
+            <div class="card-body">
+                {% if retour is defined %}
+                    <p class="text-muted">{{ retour }}</p>
+                {% endif %}
+
+                {% if message is defined %}
+                    {% for mess in message %}
+                        {% if user.id == mess.utilisateurSend.id %}
+                            <div class="gauche bg-info text-end p-3 my-1">{{ mess.contenu }}
+                                <span class="text-muted">Envoyé le {{ mess.createAt|date('d/m/Y à H:i') }}</span>
+                            </div>
+                        {% endif %}
+                        {% if user.id == mess.utilisateurReceive.id %}
+                            <div class="droite bg-warning p-3 my-1">{{ mess.contenu }}
+                                <span class="text-muted">Envoyé le {{ mess.createAt|date('d/m/Y à H:i') }}</span>
+                            </div>
+                        {% endif %}
+                    {% endfor %}
+
+                    <form method="post" action="{{ path('app_message.send', {id: user.id, receive: receive.id}) }}" class="d-inline-block">
+                        <div class="my-3 chat">
+                            <label for="msg" class="form-label">Message</label>
+                            <textarea class="form-control" id="msg" rows="3" name="mess"></textarea>
+                            <button class="btn btn-primary w-100 my-2" type="submit">Envoyer</button>
+                        </div>
+                    </form>
+                {% endif %}
+
+                {% if users is defined %}
+                    <table class="table table-striped">
+                        {% for user1 in users %}
+                            <tr>
+                                <td><a href="{{ path('app_message.send', {id: user.id, receive: user1.id}) }}">{{ user1.nom }}</a></td>
+                            </tr>
+                        {% endfor %}
+                    </table>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+{% endblock %}

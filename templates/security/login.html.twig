@@ -1,0 +1,77 @@
+{% extends 'base.html.twig' %}
+
+{% block title %} Connexion - Franck Immo {% endblock %}
+
+{% block style %}
+    <style>
+        #eye-addon, .form-check-label {
+            cursor: pointer;
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+    <div class="container-md mx-auto ">
+        <div class="card mx-auto">
+            <div class="card-header">
+                <h1 class="mb-3 fw-bold text-center">Connectez-vous</h1>
+            </div>
+            <div class="card-body">
+                <form method="post">
+                    {% if error %}
+                        <div class="alert alert-danger">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
+                    {% endif %}
+
+                    {% if app.user %}
+                        <div class="mb-3">
+                            Vous êtes connectés en tant que {{ app.user.userIdentifier }}, <a href="{{ path('app_logout') }}">Deconnexion</a>
+                        </div>
+                    {% endif %}
+
+                    <div class="input-group mb-3">
+                        <span class="input-group-text" id="email-addon"><i class="fa-solid fa-envelope"></i></span>
+                        <input type="email" placeholder="email" value="{{ last_username }}" name="email" id="inputEmail" class="form-control" aria-label="Email" aria-describedby="email-addon" autocomplete="email" required autofocus />
+                    </div>
+
+                    <div class="input-group mb-3">
+                        <span class="input-group-text" id="pass-addon"><i class="fa-solid fa-lock"></i></span>
+                        <input type="password" name="password" id="inputPassword" placeholder="Mot de passe" class="form-control" autocomplete="current-password" aria-label="Password" aria-describedby="pass-addon" required>
+                        <span class="input-group-text" id="eye-addon" onclick="togglePass()"><i class="fa-solid fa-eye" id="eyeCon"></i></span>
+                    </div>
+
+                    <div class="form-check">
+                        <input type="checkbox" name="_remember_me" class="form-check-input" id="remember">
+                        <label class="form-check-label" for="remember">Se rappeler de moi</label>
+                    </div>
+                    <div class="mb-3 text-end">
+                        <a href="/forgot_pass"> Mot de passe oublié </a>
+                    </div>
+
+                    <input type="hidden" name="_csrf_token"
+                           value="{{ csrf_token('authenticate') }}"
+                    >
+                    <button class="btn btn-lg btn-primary w-100" type="submit">
+                        Se connecter
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+{% block script %}
+    <script>
+        function togglePass() {
+            let $pass = $('#inputPassword'), $eye = $('#eyeCon');
+            if ($eye.hasClass('fa-eye')) {
+                $eye.removeClass('fa-eye')
+                $eye.addClass('fa-eye-slash')
+                $pass.attr('type', 'text')
+            }
+            else {
+                $eye.removeClass('fa-eye-slash')
+                $eye.addClass('fa-eye')
+                $pass.attr('type', 'password')
+            }
+        }
+    </script>
+{% endblock %}

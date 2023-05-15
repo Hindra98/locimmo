@@ -1,0 +1,22 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Abonnement - FI{% endblock %}
+
+{% block body %}
+
+    <div class="container">
+        <h1> {{ subscription['title'] }} </h1>
+        <div class="box-propietaire"> {{ subscription['subtitle'] }} </div>
+        <div class="box-amount"> {{ subscription['amount'] }}&euro;/mois</div>
+
+        {{ pay }}
+        <br/>
+        <?php echo 'pay'; ?>
+
+        {#
+            $payement = new \Payement\PayementUtil();
+            echo $payement->showPayPalPayement_Ui($subscription);
+        #}
+    </div>
+
+{% endblock %}

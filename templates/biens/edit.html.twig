@@ -1,0 +1,71 @@
+{% extends 'base.html.twig' %}
+
+{% block title %} Edition du bien {{ biens.nom }} {% endblock %}
+
+{% block style %}
+    <style>
+        div.lightbox figure {
+            display: inline-block;
+            background-color: grey;
+            width: calc((20vw - 10px));
+            height: 50vh !important;
+            margin: 5px 5px;
+            border: 1px solid #FFF;
+            box-shadow: 0px 0px 8px rgba(0, 0, 0, .3);
+            vertical-align: top;
+        }
+        div.lightbox figure img, div.lightbox figure video {
+            height: 45vh !important;
+            width: 100%;
+        }
+    </style>
+{% endblock %}
+{% block body %}
+    <div class="container mt-4">
+        <h1 class="text-center">Editer le bien <span class="fw-bold">"{{ biens.nom }}"</span></h1>
+        {{ include('biens/_form.html.twig') }}
+        <div id="biens_photo" class="mt-3">
+            {% if biens.image.current %}
+            <div class="lightbox">
+                {% for photo in biens.image %}
+                    {% if photo.video < 1 %}
+                        <figure class="figure">
+                            <img src="{{ asset('assets/uploads/images_biens/' ~ photo.nom) }}" class="figure-img img-fluid rounded" alt="{{ biens.nom }}" />
+                            <figcaption class="figure-caption">
+                                <form method="post" action="{{ path('bien.photo.del', {bien: biens.id, id: photo.id}) }}" class="">
+                                    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ photo.id) }}"/>
+                                    <button class="btn btn-danger w-100"><i class="fa-solid fa-trash-can"></i> Supprimer
+                                    </button>
+                                </form>
+                            </figcaption>
+                        </figure>
+                    {% endif %}
+                {% endfor %}
+                {% for photo in biens.image %}
+                    {% if photo.video > 0 %}
+                        <figure class="figure">
+                            <video src="{{ asset('assets/uploads/images_biens/' ~ photo.nom) }}" class="figure-img img-fluid rounded" controls></video>
+                            <figcaption class="figure-caption">
+                                <form method="post" action="{{ path('bien.photo.del', {bien: biens.id, id: photo.id}) }}" class="">
+                                    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ photo.id) }}"/>
+                                    <button class="btn btn-danger w-100"><i class="fa-solid fa-trash-can"></i> Supprimer
+                                    </button>
+                                </form>
+                            </figcaption>
+                        </figure>
+                    {% endif %}
+                {% endfor %}
+            </div>
+            {% endif %}
+        </div>
+    </div>
+{% endblock %}
+{% block script %}
+
+    <script>
+        $('#biens_photo').fileupload();
+    </script>
+
+{% endblock %}
+
+

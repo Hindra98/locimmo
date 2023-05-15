@@ -1,0 +1,29 @@
+{% extends 'base.html.twig' %}
+
+{% block style %}
+
+{% endblock %}
+
+{% block body %}
+    <div class="container-md mx-auto my-5">
+        <div class="card mx-auto my-4">
+            <div class="card-header">
+                <h1 class="mb-3 fw-bold text-center">A propos de nous</h1>
+            </div>
+            <div class="card-body p-4">
+                <h5 class="card-title">Franck Ngassam, <span class="text-muted">Expert en immobilier</span> </h5>
+                <p class="card-text"> Lorem ipsum dolor sit amet, consectetur adipisicing elit.
+                    Aspernatur exercitationem facere fugit ipsum molestiae nulla quis vitae!
+                    Illum labore nesciunt quae quos rerum similique tenetur vel velit vitae! Ad, praesentium?
+                    Lorem ipsum dolor sit amet, consectetur adipisicing elit.
+                    Aspernatur exercitationem facere fugit ipsum molestiae nulla quis vitae!
+                    Illum labore nesciunt quae quos rerum similique tenetur vel velit vitae! Ad, praesentium? </p>
+                <h6 class="card-subtitle text-muted">Vous cherchez un sejour agréable à moindre prix, consultez notre grande base de données
+                    de biens immobiliers <a href="{{ path('index') }}"> ici </a>
+                </h6>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
+

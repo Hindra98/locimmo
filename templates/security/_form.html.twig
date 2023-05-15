@@ -1,0 +1,39 @@
+
+<div class="card-body">
+    {{ form_start(form) }}
+    <div class="input-group mb-3">
+        <span class="input-group-text" id="nom-addon"><i class="fa-solid fa-user"></i></span>
+        {{ form_widget(form.nom, {attr: {placeholder: 'Nom complet', 'aria-describedby': 'nom-addon', 'aria-label': 'Nom'}}) }}
+    </div>{{ form_errors(form.nom) }}
+
+    <div class="row mb-3">
+        <div class="col-md-6">
+            <div class="input-group mb-3">
+                <span class="input-group-text" id="email-addon"><i class="fa-solid fa-envelope"></i></span>
+                {{ form_widget(form.email, {attr: {placeholder: 'Email', 'aria-describedby': 'email-addon', 'aria-label': 'Email'}}) }}
+            </div>{{ form_errors(form.email) }}
+        </div>
+        <div class="col-md-6">
+            <div class="input-group mb-3">
+                <span class="input-group-text" id="pass-addon"><i class="fa-solid fa-lock"></i></span>
+                {{ form_widget(form.password, {attr: {placeholder: 'Mot de passe', 'aria-describedby': 'pass-addon', 'aria-label': 'Password'}}) }}
+                <span class="input-group-text" id="eye-addon" onclick="togglePass()"><i class="fa-solid fa-eye" id="eyeCon"></i></span>
+            </div>{{ form_errors(form.password) }}
+        </div>
+    </div>
+
+    <div class="row mb-3">
+        <div class="col-md-6">
+            <label class="form-check-label" id="sexe-addon">Civilité: &nbsp;</label>
+            {{ form_widget(form.sexe, {attr: {class: 'form-check-inline'}}) }}
+            {{ form_errors(form.sexe) }}
+        </div>
+        <div class="col-md-6">
+            {{ form_widget(form.profil) }}
+            {{ form_errors(form.profil) }}
+        </div>
+    </div>
+
+    {{ form_row(form.valider, {attr: {class: 'w-100 bg-primary my-3 fw-bold'}}) }}
+    {{ form_end(form) }}
+</div>

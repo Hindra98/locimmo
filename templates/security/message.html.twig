@@ -1,0 +1,194 @@
+{% extends 'base.html.twig' %}
+
+{% block title %} {{ title }} - {{ app.user.nom }} {% endblock %}
+
+{% block style %}
+    <style>
+        div.gallerie .gallery li {
+            list-style: none;
+            height: 130px;
+            flex-grow: 1;
+        }
+        .message div.card {
+            max-height: 80vh;
+            overflow: scroll;
+        }
+
+        .message-feed.right > .pull-right {
+            margin-left: 15px;
+        }
+        .message-feed:not(.right) .mf-content {
+            background: #03a9f4;
+            color: #fff;
+            box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 3px 1px -2px rgba(0, 0, 0, 0.2), 0 1px 5px 0 rgba(0, 0, 0, 0.12);
+        }
+
+        .message-feed.right .mf-content {
+            background: #eee;
+        }
+
+        .message-feed.right {
+            text-align: right;
+        }
+
+        .mf-content {
+            display: inline-block;
+            padding: 12px 17px 13px;
+            border-radius: 2px;
+            max-width: 95%;
+        }
+
+        .media-body, .img-box {
+            display: inline-block;
+            vertical-align: top;
+        }
+
+        .media-body {
+            max-width: 80%;
+        }
+
+        .mf-date {
+            display: block;
+            color: #B3B3B3;
+            margin-top: 7px;
+        }
+
+        .mf-date > i {
+            font-size: 14px;
+            line-height: 100%;
+            position: relative;
+            top: 1px;
+        }
+        .img-avatar {
+            height: 37px;
+            width: 37px;
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+    <div class="container-md mx-auto message">
+        <div class="card mx-auto">
+            <div class="card-header"> <h4 class="mb-3 fw-bold text-center">
+                {% if favs is defined %} Liste de vos favoris {% else %}
+                        Inbox {% if receive is defined %}- {{ receive.nom }} {% endif %}
+                {% endif %}</h4>
+            </div>
+            <div class="card-body">
+                {% if retour is defined %}
+                    <p class="text-muted">{{ retour }}</p>
+                {% endif %}
+
+                {% if favs is defined and favs != 0 %}
+                    <table class="table table-striped">
+                        <tr>
+                            <th>Noms</th>
+                            <th>Propriétaire</th>
+                            <th>Prix</th>
+                            <th>Actions</th>
+                        </tr>
+                        {% for fav in favori %}
+                            <tr>
+                                <td><a href="{{ path('biens.detail', {id: fav.biens.id}) }}"> {{ fav.biens.nom }} </a></td>
+                                <td> {{ fav.biens.proprietaires.utilisateur.nom }} </td>
+                                <td> {{ fav.biens.prix }}&euro;</td>
+                                <td>
+                                    <form method="post" action="{{ path('app_fav_del', {id: fav.id}) }}"
+                                          class="d-inline-block">
+                                        <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ fav.id) }}"/>
+                                        <button class="btn btn-danger"><i class="fa-solid fa-trash-can"></i> Supprimer
+                                        </button>
+                                    </form>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </table>
+                {% endif %}
+
+                {% if message is defined %}
+                    <form method="post" action="{{ path('app_message.send', {receive: receive.id}) }}" class="send_mess sticky-top">
+                        <div class="input-group mb-1 chat">
+                            <input type="text" name="mess" class="form-control" placeholder="Entrer votre message ici ..." aria-label="Message text" aria-describedby="mess-button">
+                            <button class="btn btn-primary" type="submit" id="mess-button">
+                                <i class="fa-regular fa-paper-plane fa-lg"></i></i>
+                            </button>
+                        </div>
+                    </form>
+                    {% for mess in message %}
+                        {% if app.user.id == mess.utilisateurSend.id %}
+                            <div class="message-feed py-1 right">
+                                <div class="media-body">
+                                    <div class="mf-content"> {{ mess.contenu }}
+                                        {% if mess.bien > 0 %}
+                                            <br/><a href="{{ path('biens.detail', {id: mess.bien}) }}">Voir le bien</a>
+                                        {% endif %}
+                                        <form method="post" action="{{ path('app_message_del', {user: mess.utilisateurReceive.id, id: mess.id}) }}"
+                                              class="">
+                                            <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ mess.id) }}"/>
+                                            <button class="btn btn-close btn-outline-danger" aria-label="Close"></button>
+                                        </form>
+                                    </div>
+                                    <small class="mf-date"><i
+                                                class="fa-regular fa-clock"></i> {{ mess.createAt|date('d/m/Y à H:i') }}
+                                    </small>
+                                </div>
+                                <div class="pull-right img-box">
+                                    {% if mess.utilisateurSend.profil %}
+                                        <img src={{ asset('assets/img/' ~ mess.utilisateurSend.profil) }} alt="{{ mess.utilisateurSend.nom }}"
+                                             class="img-avatar rounded-circle"/>
+                                    {% else %}
+                                        <i class="fa-solid fa-user img-avatar rounded-circle"></i>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        {% endif %}
+                        {% if app.user.id == mess.utilisateurReceive.id %}
+                            <div class="message-feed py-1 media">
+                                <div class="pull-left img-box">
+                                    {% if mess.utilisateurSend.profil %}
+                                        <img src={{ asset('assets/img/' ~ mess.utilisateurSend.profil) }} alt="{{ mess.utilisateurSend.nom }}"
+                                             class="img-avatar rounded-circle"/>
+                                    {% else %}
+                                        <i class="fa-solid fa-user img-avatar rounded-circle"></i>
+                                    {% endif %}
+                                </div>
+                                <div class="media-body">
+                                    <div class="mf-content"> {{ mess.contenu }}
+                                        {% if mess.bien > 0 %}
+                                            <br/><a href="{{ path('biens.detail', {id: mess.bien}) }}"
+                                                    class="text-warning">Voir le bien</a>
+                                        {% endif %}
+                                    </div>
+                                    <small class="mf-date"><i
+                                                class="fa-regular fa-clock"></i> {{ mess.createAt|date('d/m/Y à H:i') }}
+                                    </small>
+                                </div>
+                            </div>
+                        {% endif %}
+                    {% endfor %}
+                {% endif %}
+
+                {% if messUser is defined %}
+                    <table class="table table-striped table-hover">
+                        <tr>
+                            <th>Noms</th>
+                            <th>Email</th>
+                        </tr>
+                        {% for mes in messUser %}
+                            <tr>
+                                <td><a href="{{ path('app_message.send', {receive: mes.id}) }}">
+                                        {{ mes.nom }}
+                                    </a>
+                                    {% if app.session.get(mes.id) and app.session.get(mes.id) > 0 %}
+                                        <span class="badge bg-danger ms-2"> {{ app.session.get(mes.id) }} </span>
+                                    {% endif %}
+                                </td>
+                                <td> {{ mes.email }} </td>
+                            </tr>
+                        {% endfor %}
+                    </table>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+{% endblock %}

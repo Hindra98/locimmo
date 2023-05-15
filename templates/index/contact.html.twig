@@ -1,0 +1,25 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+
+    <div class="card mx-auto w-75">
+        <div class="card-header">
+            <h1 class="mb-3 fw-bold text-center">Votre commentaire</h1>
+        </div>
+        <div class="card-body">
+            <form method="post" action="{{ path('index.contact') }}" class="w-75 mx-auto">
+                <div class="my-3 chat mx-auto">
+                    <label for="msg" class="form-label">Message</label>
+                    <textarea class="form-control" id="msg" rows="3" name="mess"></textarea>
+                    <button class="btn btn-primary w-100 my-2" type="submit">Envoyer</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+{% endblock %}
+
+{% block style %}
+
+{% endblock %}
+

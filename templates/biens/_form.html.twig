@@ -1,0 +1,42 @@
+<div class="mt-5 mx-auto w-75">
+    {{ form_start(form, {attr: {'class': 'border border-2 rounded-3 p-4'}})}}
+    <div class="row mb-3 mt-3">
+        <div class="col-md-4 mb-2">{{ form_widget(form.nom, {attr: {placeholder: 'Nom', 'value': biens.nom}}) }} {{ form_errors(form.nom) }}</div>
+        <div class="col-md-8 mb-2"><div class="input-group">
+                {{ form_widget(form.numero, {attr: {placeholder: 'Entrer le numero de rue'}}) }} {{ form_errors(form.numero) }}
+                {{ form_widget(form.rue, {attr: {placeholder: 'Entrer la rue'}}) }} {{ form_errors(form.rue) }}
+            </div></div>
+    </div>
+    <div class="row mb-3 mt-3">
+        <div class="col-md-8 mb-2"><div class="input-group">
+                {{ form_widget(form.code, {attr: {placeholder: 'Code postal'}}) }}
+                {{ form_widget(form.ville, {attr: {placeholder: 'Ville'}}) }}
+            </div> {{ form_errors(form.code) }} {{ form_errors(form.ville) }}
+        </div>
+        <div class="col-md-4 mb-2">
+            <div class="input-group">
+                <label class="input-group-text" for="inputGroupSelect01"><i class="fa-solid fa-house"></i></label>
+                {{ form_widget(form.type, {attr: {'id': 'inputGroupSelect01'}}) }}
+            </div> {{ form_errors(form.type) }}
+        </div>
+    </div>
+    <div class="row mb-3">
+        <div class="col-md-6 mb-2">
+            <div class="input-group">
+                <span class="input-group-text" id="basic-addon2"> <i class="fa-solid fa-euro" id="eyeCon"></i> </span>
+                {{ form_widget(form.prix, {attr: {placeholder: 'Prix', 'aria-describedby': 'basic-addon2', 'value': biens.prix}}) }}
+                {{ form_widget(form.superficie, {attr: {placeholder: 'Superficie', 'aria-describedby': 'basic-addon3', 'value': biens.superficie}}) }}
+                <span class="input-group-text" id="basic-addon3"><b>m²</b></span>
+            </div> {{ form_errors(form.prix) }} {{ form_errors(form.superficie) }}
+        </div>
+        <div class="col-md-6 mb-2">{{ form_widget(form.photos) }} {{ form_errors(form.photos) }}</div>
+    </div>
+    <div class="row mb-3">
+        <div class="col-md-2"></div>
+        <div class="col-md-8 mb-2">
+            {{ form_widget(form.description, {attr: {placeholder: 'Description du bien', 'rows': 3, 'value': biens.description}}) }} {{ form_errors(form.description) }}
+        </div>
+    </div>
+    <div class="mb-1">{{ form_widget(form.valider, {attr: {class: 'w-100 btn-primary fw-bold'}}) }}</div>
+    {{ form_end(form) }}
+</div>

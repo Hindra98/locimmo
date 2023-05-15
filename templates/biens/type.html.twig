@@ -1,0 +1,59 @@
+{% extends 'base.html.twig' %}
+
+{% block title %} Type de biens {% endblock %}
+
+{% block body %}
+
+    <div class="container mt-4">
+        <div class="mt-5 mx-auto w-75">
+            <form method="post" action="{{ path('biens.type', {biens: biens.id, type: type, modif: modif}) }}" class="w-75 mx-auto border border-2 rounded-3 p-4">
+            {% if type == 0 %}
+                <h1 class="text-center">Renseigner les informations de votre chambre ({{ biens.nom }})</h1>
+                <select name="type_cam" id="type" class="w-100 form-select">
+                    <option selected value="0" disabled>Selectionnez le type de bien</option>
+                    <option value="Kot">Kot</option>
+                    <option value="Colocation">Colocation</option>
+                </select>
+                <button class="btn btn-primary w-100 my-2" type="submit">Envoyer</button>
+            {% elseif type == 2 %}
+                <h1 class="text-center">Renseigner les informations de votre appartement ({{ biens.nom }})</h1>
+                <div class="row mb-3 mt-3">
+                    <div class="col-md-6 mb-2">
+                        <input type="number" class="form-control" id="piece" name="piece_appart" placeholder="Nombre de pièces">
+                    </div><div class="col-md-2"></div>
+                    <div class="form-check form-switch col-md-4 mb-2">
+                        <label class="form-check-label" for="garage">Garage</label>
+                        <input class="form-check-input" type="checkbox" role="switch" id="garage" name="garage" />
+                    </div>
+                </div>
+                <div class="row mb-3 mt-3"><div class="col-md-2"></div>
+                    <div class="form-check form-switch col-md-4 mb-2">
+                        <label class="form-check-label" for="etage">Etage</label>
+                        <input class="form-check-input" type="checkbox" role="switch" id="etage" name="etage" />
+                    </div><div class="col-md-2"></div>
+                    <div class="form-check form-switch col-md-4 mb-2">
+                        <label class="form-check-label" for="ascenceur">Ascenceur</label>
+                        <input class="form-check-input" type="checkbox" role="switch" id="ascenceur" name="ascenceur"/>
+                    </div>
+                </div>
+                <button class="btn btn-primary w-100 my-2" type="submit">Envoyer</button>
+            {% elseif type == 3 %}
+                <h1 class="text-center">Renseigner les informations de votre maison ({{ biens.nom }})</h1>
+                <div class="row mb-3 mt-3">
+                    <div class="col-md-6 mb-2">
+                        <input type="number" class="form-control" id="pieces" name="piece" placeholder="Nombre de pièces">
+                    </div><div class="col-md-2"></div>
+                    <div class="form-check form-switch col-md-4 mb-2">
+                        <label class="form-check-label" for="grenier">Grenier</label>
+                        <input class="form-check-input" type="checkbox" role="switch" id="grenier" name="grenier" />
+                    </div>
+                </div>
+                <button class="btn btn-primary w-100 my-2" type="submit">Envoyer</button>
+            {% endif %}
+            </form>
+        </div>
+    </div>
+
+{% endblock %}
+
+

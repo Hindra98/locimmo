@@ -1,0 +1,61 @@
+{% extends 'base.html.twig' %}
+
+{% block title %} Connexion - Franck Immo {% endblock %}
+
+{% block style %}
+	<style>
+		#eye-addon, .form-check-label {
+			cursor: pointer;
+		}
+	</style>
+{% endblock %}
+
+{% block body %}
+
+	<div class="container connexion mt-4">
+		<form class="w-50 mx-auto">
+			<h2 class="text-center my-3">Connexion - Franck Immo</h2>
+			<div class="input-group mb-3">
+				<span class="input-group-text" id="login-addon"><i class="fa-solid fa-envelope"></i></span>
+				<input type="text" class="form-control" placeholder="login" aria-label="Username" aria-describedby="login-addon" required />
+			</div>
+
+			<div class="input-group mb-3">
+				<span class="input-group-text" id="pass-addon"><i class="fa-solid fa-lock"></i></span>
+				<input type="password" class="form-control" id="passCon" placeholder="Mot de passe" aria-label="Password" aria-describedby="pass-addon" required />
+				<span class="input-group-text" id="eye-addon" onclick="togglePass()"><i class="fa-solid fa-eye" id="eyeCon"></i></span>
+			</div>
+
+			<div class="mb-3 px-2 row">
+				<div class="col-lg-6 form-check text-start">
+					<input type="checkbox" class="form-check-input" id="exampleCheck1">
+					<label class="form-check-label" for="exampleCheck1">Se rappeler de moi</label>
+				</div>
+
+				<div class="col-lg-6 col-md-6 text-end">
+          Vous n'avez pas de compte? <a href="/inscription"> s'inscrire </a>
+				</div>
+			</div>
+			<button type="submit" class="btn btn-primary w-100">Se connecter</button>
+		</form>
+	</div>
+{% endblock %}
+{% block script %}
+<script>
+	function togglePass() {
+		let $pass = $('#passCon'), $eye = $('#eyeCon');
+			if ($eye.hasClass('fa-eye')) {
+				$eye.removeClass('fa-eye')
+				$eye.addClass('fa-eye-slash')
+				$pass.attr('type', 'text')
+			}
+			else {
+				$eye.removeClass('fa-eye-slash')
+				$eye.addClass('fa-eye')
+				$pass.attr('type', 'password')
+			}
+	}
+
+
+</script>
+{% endblock %}

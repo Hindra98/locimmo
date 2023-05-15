@@ -1,0 +1,86 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Panel Administrateur{% endblock %}
+
+{% block body %}
+    <div class="container my-4">
+        <div class="des w-100">
+            <span class="h1 text-start">Gestion des utilisateurs</span>
+            <a href="{{ path('app_admin_comment') }}" class="float-end h5">Voir les commentaires
+                {% if app.session.get('tCom') and app.session.get('tCom') > 0 %}
+                    <span class="badge bg-danger"> {{ app.session.get('tCom') }} </span>
+                {% endif %}
+            </a>
+        </div>
+        <table class="table table-striped">
+            <thead>
+            <tr>
+                <th>Users</th>
+                <th>Email</th>
+                <th>Type de compte</th>
+                <th>Date de création</th>
+                <th>Dernière connexion</th>
+                <th>Actions</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for users in user %}
+                <tr>
+                    <td><b>{{ users.nom }}</b></td>
+                    <td>{{ users.email }}</td>
+                    <td>{% if 'ROLE_PROPRIO' in users.roles %} Proprietaires
+                        {% elseif 'ROLE_ADMIN' in users.roles %} Admin
+                        {% elseif 'ROLE_USER' in users.roles %} Client{% endif %}</td>
+                    <td>{{ users.createAt|date('d/m/y à H:i') }}</td>
+                    <td>{{ users.updateAt|date('d/m/y à H:i') }}</td>
+                    <td>{% if 'ROLE_ADMIN' in users.roles %}
+                            <button class="btn btn-danger disabled"><i class="fa-solid fa-trash-can"></i> Bannir</button>
+                        {% else %}
+                            <form method="post" action="{{ path('app_admin_delete', {id: users.id}) }}" class="d-inline-block"
+                                  onsubmit='return confirm("Voulez-vous vraiment bannir \"{{ users.email }}\"?")'>
+                                <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ users.id) }}"/>
+                                <button class="btn btn-danger"><i class="fa-solid fa-trash-can"></i> Bannir</button>
+                            </form>
+                            {% if 'ROLE_PROPRIO' in users.roles %}
+                                <button class="btn btn-primary disabled">
+                                    <i class="fa-solid fa-upload"></i> Nommer Admin</button>
+                            {% else %}
+                                <a class="btn btn-primary" href="{{ path('app_admin_nomme', {id: users.id}) }}">
+                                    <i class="fa-solid fa-upload"></i> Nommer Admin</a>
+                            {% endif %}
+                        {% endif %}
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+        <nav aria-label="Page navigation example">
+            <ul class="pagination">
+                {% if page != 1 %}
+                    <li class="page-item">
+                        <a class="page-link" href="{{ path('biens', {page: page-1}) }}" aria-label="Previous"><span aria-hidden="true">&laquo;</span></a>
+                    </li>
+                {% endif %}
+                {% if page == 1 %}
+                    <li class="page-item">
+                        <a class="page-link disabled" href="#"><span aria-hidden="true">&laquo;</span></a>
+                    </li>
+                {% endif %}
+                {% for i in range(1, nbrePage) %}
+                    <li class="page-item {% if page==i %}active{% endif %}"><a class="page-link" href="{{ path('biens', {page: i}) }}">{{ i }}</a></li>
+                {% endfor %}
+
+                {% if page == nbrePage %}
+                    <li class="page-item">
+                        <a class="page-link disabled" href="#"><span aria-hidden="true">&raquo;</span></a>
+                    </li>
+                {% endif %}
+                {% if page != nbrePage %}
+                    <li class="page-item">
+                        <a class="page-link" href="{{ path('biens', {page: page+1}) }}" aria-label="Next"><span aria-hidden="true">&raquo;</span></a>
+                    </li>
+                {% endif %}
+            </ul>
+        </nav>
+    </div>
+{% endblock %}

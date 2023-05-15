@@ -1,0 +1,51 @@
+{% extends 'base.html.twig' %}
+
+{% block title %} Commentaires {% endblock %}
+
+{% block body %}
+
+<div class="container">
+    <div class="row mx-auto mb-3">
+        {% for com in user %}
+            <div class="col-xl-3 col-lg-4 col-md-6 col-sm-12"><div class="card mx-auto">
+                <div class="card-header">
+                    <h5 class="mb-3 fw-bold text-center">{{ com.utilisateur.nom }}</h5>
+                </div>
+                <div class="card-body">
+                    <p class="text-muted">{{ com.contenu }}</p>
+                </div>
+                <div class="card-footer"><span class="text-muted text-end">Envoyé le {{ com.createAt|date('d/m/Y à H:i') }}</span></div>
+            </div></div>
+        {% endfor %}
+    </div>
+    <nav aria-label="Page navigation example">
+        <ul class="pagination">
+            {% if page != 1 %}
+                <li class="page-item">
+                    <a class="page-link" href="{{ path('app_admin_comment', {page: page-1}) }}" aria-label="Previous"><span aria-hidden="true">&laquo;</span></a>
+                </li>
+            {% endif %}
+            {% if page == 1 %}
+                <li class="page-item">
+                    <a class="page-link disabled" href="#"><span aria-hidden="true">&laquo;</span></a>
+                </li>
+            {% endif %}
+            {% for i in range(1, nbrePage) %}
+                <li class="page-item {% if page==i %}active{% endif %}"><a class="page-link" href="{{ path('app_admin_comment', {page: i}) }}">{{ i }}</a></li>
+            {% endfor %}
+
+            {% if page == nbrePage %}
+                <li class="page-item">
+                    <a class="page-link disabled" href="#"><span aria-hidden="true">&raquo;</span></a>
+                </li>
+            {% endif %}
+            {% if page != nbrePage %}
+                <li class="page-item">
+                    <a class="page-link" href="{{ path('app_admin_comment', {page: page+1}) }}" aria-label="Next"><span aria-hidden="true">&raquo;</span></a>
+                </li>
+            {% endif %}
+        </ul>
+    </nav>
+</div>
+
+{% endblock %}

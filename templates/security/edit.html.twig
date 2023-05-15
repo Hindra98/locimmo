@@ -1,0 +1,70 @@
+{% extends 'base.html.twig' %}
+
+{% block title %} Edition - {{ user.nom }} {% endblock %}
+
+{% block style %}
+    <style>
+        #eye-addon, .form-check-label {
+            cursor: pointer;
+        }
+        .lightbox img, .lightbox i {
+            border: 1px solid #FFF;
+            box-shadow: 0px 0px 8px rgba(0, 0, 0, .3);
+            width: 10vw;
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+    <div class="container-md mx-auto ">
+        <div class="card mx-auto">
+            <div class="card-header">
+                <h1 class="mb-3 h3 fw-bold text-center">Bienvenue sur votre panel</h1>
+            </div>
+            {% if edit is defined %}
+                <div class="edit m-4">
+                    {% if user.profil %}
+                        <div class="lightbox">
+                            <img src="{{ asset('assets/img/' ~ user.profil) }}" alt="{{ user.nom }}" />
+                        </div>
+                    {% else %}
+                        <div class="lightbox">
+                            <i class="fa-solid fa-user fa-3x"></i>
+                        </div>
+                    {% endif %}
+                    <ul class="list-group my-3">
+                        <li class="list-group-item">Nom : {{ user.nom }}</li>
+                        <li class="list-group-item">Email : {{ user.email }}</li>
+                        <li class="list-group-item">Sexe : {% if user.sexe == 'H' %} Homme {% else %} Femme {% endif %}</li>
+                        <li class="list-group-item">Statut : {% if is_granted('ROLE_PROPRIO') %} Propriétaires de biens immobiliers. (<a href="{{ path('biens') }}">Voir mes biens</a>)
+                            {% elseif is_granted('ROLE_ADMIN') %} Administrateur {% else %} Utilisateur {% endif %}</li>
+                        <li class="list-group-item">Compte crée le : {{ user.createAt|date('d/m/y à H:i')  }}</li>
+                    </ul>
+                    <form method="post" action="{{ path('app_admin_delete', {id: user.id, user: 'user'}) }}"
+                          onsubmit='return confirm("Voulez-vous vraiment supprimer votre compte?")'>
+                        <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ user.id) }}"/>
+                        <a href="{{ path('app_edit', {edit: 1}) }}" class="btn btn-primary"><i class="fa-solid fa-user-pen"></i> Editer</a>
+                        <button class="btn btn-danger"><i class="fa-solid fa-trash-can"></i> Supprimer mon compte</button>
+                    </form>
+                </div>
+            {% else %} {{ include('security/_form.html.twig') }} {% endif %}
+        </div>
+    </div>
+{% endblock %}
+{% block script %}
+    <script>
+        function togglePass() {
+            let $pass = $('#utilisateur_password'), $eye = $('#eyeCon');
+            if ($eye.hasClass('fa-eye')) {
+                $eye.removeClass('fa-eye')
+                $eye.addClass('fa-eye-slash')
+                $pass.attr('type', 'text')
+            }
+            else {
+                $eye.removeClass('fa-eye-slash')
+                $eye.addClass('fa-eye')
+                $pass.attr('type', 'password')
+            }
+        }
+    </script>
+{% endblock %}

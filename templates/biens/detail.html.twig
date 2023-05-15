@@ -1,0 +1,332 @@
+{% extends 'base.html.twig' %}
+
+{% block title %} Detail du bien {{ bien.nom }} {% endblock %}
+
+{% block style %}
+    <style>
+        .desactiver button, .desactiver button:hover, .desactiver button:active {
+            border: 1px solid #999999;
+            background-color: #cccccc;
+            color: #666;
+            cursor: default;
+        }
+        div.detail_bien {
+            width: 90vw;
+        }
+        div.gallerie .gallery li {
+            list-style: none;
+            height: 20vh;
+            flex-grow: 1;
+        }
+        div.gallerie .gallery {
+            max-width: 99%;
+            margin: 0 auto;
+            display: flex;
+            flex-wrap: wrap;
+            gap: .1rem;
+            padding: 0 5px;
+        }
+        div.gallerie .gallery img, div.gallerie .gallery video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        div.detail {
+            background-color: #eee;
+        }
+        div.detail span {
+            cursor: default !important;
+        }
+        div.bas {
+            max-width: 700px;
+        }
+        div.bas h2 {
+            text-decoration: underline;
+        }
+        div.bas div {
+            font-size: 1.2em;
+        }
+        div.bas div a {
+            text-decoration: none;
+        }
+        div.bas div i {
+            color: #777;
+        }
+        .span {
+            padding: 0.375rem 0.75rem;
+            font-size: 1rem;
+            font-weight: 400;
+            line-height: 1.5;
+            border-width: 1px;
+            border-radius: 0.375rem;
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.15), 0 1px 1px rgba(0, 0, 0, 0.075);
+            text-align: center;
+            display: inline-block;
+            transition: all 0.15s ease-in-out;
+        }
+        .span-light {
+            color: #000;
+            background: #f8f9fa;
+            border-color: #f8f9fa;
+        }
+        .span-light:hover {
+            color: #000;
+            background: #d3d4d5;
+            border-color: #c6c7c8;
+        }
+        .span-info {
+            color: #000;
+            background: #0dcaf0;
+            border-color: #0dcaf0;
+        }
+        .span-info:hover {
+            color: #000;
+            background: #31d2f2;
+            border-color: #25cff2;
+        }
+        /* Styles the thumbnail */
+        a.lightbox img, a.lightbox video {
+            border: 1px solid #FFF;
+            box-shadow: 0px 0px 8px rgba(0, 0, 0, .3);
+        }
+        .carousel-item {
+            height: 80vh;
+        }
+        .carousel-inner {
+            background-color: #00000090;
+        }
+        .carousel-item img, .carousel-item video {
+            width: auto;
+            height: 100%;
+            object-fit: cover;
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+
+    <div class="mx-auto detail_bien">
+        <div class="row mb-3">
+            <div class="gallerie col-lg-7 col-md-6 col-12">
+                <ul class="gallery">
+                    {% for photo in photos %}
+                        {% if photo.video < 1 %}
+                            <li><a class="lightbox" href="#" data-bs-toggle="modal" data-bs-target="#visual-{{ photo.id }}">
+                                    <img src="{{ asset('assets/uploads/images_biens/' ~ photo.nom) }}" alt="{{ bien.nom }}" />
+                                </a></li>
+                        {% endif %}
+                    {% endfor %}
+                    {% for photo in photos %}
+                        {% if photo.video > 0 %}
+                            <li><a class="lightbox" href="#" data-bs-toggle="modal" data-bs-target="#visual-{{ photo.id }}">
+                                    <video src="{{ asset('assets/uploads/images_biens/' ~ photo.nom) }}" controls muted></video>
+                                </a>
+                            </li>
+                        {% endif %}
+                    {% endfor %}
+                </ul>
+            </div>
+
+            <div class="detail col-lg-5 col-md-6 col-12">
+                <h4>{{ bien.nom }}</h4><br/><h5>{{ bien.adresse }}</h5><br/>
+                <h5>{{ bien.superficie }}m² pour {{ bien.prix }} &euro;</h5><br/><br/>
+                <div class="mb-3">
+                    <span class="span span-info me-1"><i class="fa-solid fa-upload"></i>
+                        Publié le {{ bien.dateCreation|date('d/m/Y') }}</span>
+                    <span class="span span-light"><i class="fa-solid fa-user"></i>
+                        Actif le {{ bien.proprietaires.utilisateur.updateAt|date('d/m/Y à H:i') }}</span><br/>
+                </div>
+
+                {% if app.user %}
+                    {% if app.user == bien.proprietaires.utilisateur %}
+                        <span></span>
+                    {% else %}
+                        <div class="mb-3 ">
+                            <a href="#contact" class="btn btn-info me-1">Contacter le proprio</a>
+
+                            <form method="post" action="{{ path('biens.fav', {id: bien.id}) }}" class="d-inline-block">
+                                <input type="hidden" name="_token" value="{{ csrf_token('fav' ~ bien.id) }}"/>
+
+                                {% if fav is defined %}
+                                    {% if fav %}
+                                        <button class="btn btn-light ms-1"><i class="fa-solid fa-star fa-beat"
+                                                                              style="color: #F00;"></i></button>
+                                    {% else %}
+                                        <button class="btn btn-light ms-1"><i class="fa-solid fa-star"></i></button>
+                                    {% endif %}
+                                {% endif %}
+
+                            </form>
+                            <br/>
+                        </div>
+                    {% endif %}
+                {% else %}
+                    <div class="mb-3 desactiver">
+                        <button type="button" class="btn me-1"
+                                data-bs-toggle="tooltip" data-bs-placement="top"
+                                data-bs-custom-class="custom-tooltip"
+                                data-bs-title="Vous devez être connectés pour pouvoir contacter les proprios">
+                            Contacter le proprio
+                        </button>
+                        <button type="button" class="btn ms-1"
+                                data-bs-toggle="tooltip" data-bs-placement="top"
+                                data-bs-custom-class="custom-tooltip"
+                                data-bs-title="Vous devez être connectés pour pouvoir ajouter des favoris">
+                            <i class="fa-solid fa-star"></i>
+                        </button>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+        <div class="contact bas ms-2" id="contact">
+            <h2>Description</h2>
+            <p class="text-muted">
+                {% if bien.description %} {{ bien.description }} {% endif %}<br/>
+                {% if bien.chambres.current %}
+                    Chambre: <b>{{ bien.nom }}</b><br/>
+                    Type de chambres : <b>{{ bien.chambres.current.type }}</b>
+                {% endif %}
+
+                {% if bien.maisons.current %}
+                    Maison: <b>{{ bien.nom }}</b><br/>
+                    Dans cette maison, vous aurez
+                    <ul class="text-muted">
+                        <li>Nombre de pièces : <b>{{ bien.maisons.current.nbrePieces }}</b></li>
+                        {% if bien.maisons.current.grenier > 0 %}
+                            <li><b>Grenier</b></li>{% endif %}
+                    </ul>
+                {% endif %}
+    
+                {% if bien.studios.current %}
+                    Studio: {{ bien.nom }}
+                {% endif %}
+    
+                {% if bien.appart.current %}
+                    Appartement: <b>{{ bien.nom }}</b><br/>
+                    Dans cet appartement, vous aurez
+                    <ul class="text-muted">
+                        <li>Nombre de pièces : <b>{{ bien.appart.current.nbrePieces }}</b></li>
+                        {% if bien.appart.current.etage > 0 %}
+                            <li><b>Escaliers </b></li>{% endif %}
+                        {% if bien.appart.current.garage > 0 %}
+                            <li><b>Garage</b></li>{% endif %}
+                        {% if bien.appart.current.ascenceur > 0 %}
+                            <li><b>Ascenceurs</b></li>{% endif %}
+                    </ul>
+                {% endif %}
+                <ul class="text-muted">
+                    <li>Superficie: <b>{{ bien.superficie }}m²</b></li>
+                    <li>Coût du bien: <b>{{ bien.prix }}&euro;</b></li>
+                    <li>Adresse: {{ bien.adresse }}</li>
+                    <li>Etat: <b>{% if bien.etat > 0 %}<span class="text-success">Disponible</span>
+                        {% else %}<span class="text-danger">Non disponible</span>{% endif %}</b></li>
+                </ul>
+            </p>
+        </div>
+        <div class="contact bas ms-2" id="contact">
+            <h2>Contact</h2>
+            {% if app.user %}
+                {% if app.user == bien.proprietaires.utilisateur %}
+                    <p class="text-muted"> Ce bien vous appartient </p>
+                {% else %}
+                    <p class="text-muted">Contactez le proprietaire du bien par l'un des moyens ci-dessous </p>
+                    <div class="tel"><i class="fa-solid fa-phone"></i> <a
+                                href="tel:{{ bien.proprietaires.tel }}">{{ bien.proprietaires.tel }}</a></div>
+                    <div class="mail"><i class="fa-solid fa-envelope"></i> <a
+                                href="mailto:{{ bien.proprietaires.utilisateur.email }}">{{ bien.proprietaires.utilisateur.email }}</a>
+                    </div>
+
+                    <form method="post"
+                          action="{{ path('app_message.send', {receive: bien.proprietaires.utilisateur.id}) }}"
+                          class="">
+                        <div class="my-3 chat">
+                            <label for="msg" class="form-label">Message direct</label>
+                            <input type="hidden" name="bien_name" value="{{ bien.id }}"/>
+                            <textarea class="form-control" id="msg" rows="3"
+                                      name="mess">Bonjour {% if bien.proprietaires.utilisateur.sexe == 'F' %}madame{% else %}monsieur{% endif %} {{ bien.proprietaires.utilisateur.nom }}, je suis interéssé(e) par ce bien</textarea>
+                            <button class="btn btn-primary w-100 my-2" type="submit">Envoyer</button>
+                        </div>
+                    </form>
+                {% endif %}
+            {% else %}
+                <p class="text-muted">Vous devez vous connecter pour contacter le proprietaire de ce bien</p>
+                <a class="btn btn-secondary" href="{{ path('app_login') }}">Connexion</a>&nbsp;&nbsp;
+                <a class="btn btn-outline-secondary" href="{{ path('app_register') }}">Inscription</a>
+            {% endif %}
+        </div>
+    </div>
+
+
+    <div class="slide-container">
+        <div class="custom-slider fade">
+            <img class="slide-img" src="https://www.codeur.com/tuto/wp-content/uploads/2021/12/slide3.jpg">
+        </div>
+        <a class="prev" onclick="plusSlides(-1)">❮</a>
+        <a class="next" onclick="plusSlides(1)">❯</a>
+    </div>
+    <br>
+    <div class="slide-dot">
+        <span class="dot" onclick="currentSlide(1)"></span>
+    </div>
+
+
+    <!-- Modal -->
+
+    {% for tof in photos %}
+    <div class="modal fade" id="visual-{{ tof.id }}" tabindex="-1" aria-labelledby="visual-{{ tof.id }}" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="exampleModalLabel">Visualisation</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" onclick="stopVideo()"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="carouselExampleIndicators-{{ tof.id }}" class="carousel slide">
+                        <div class="carousel-indicators">{% set i = 0 %} {% for photo in photos %}
+                                <button type="button" data-bs-target="#carouselExampleIndicators-{{ tof.id }}" data-bs-slide-to="{{ i }}" aria-label="Slide {{ i }}"
+                                        {% if photo.id == tof.id %} class="active" aria-current="true" {% endif %}></button>
+                                {% set i = i+1 %}
+                            {% endfor %}
+                        </div>
+
+                        <div class="carousel-inner">
+                            {% for photo in photos %}{% if photo.video < 1 %}
+                                <div class="carousel-item {% if photo.id == tof.id %} active {% endif %}">
+                                    <img class="" src="{{ asset('assets/uploads/images_biens/' ~ photo.nom) }}" alt="{{ bien.nom }}">
+                                </div>
+                            {% endif %}{% endfor %}
+                            {% for photo in photos %}{% if photo.video > 0 %}
+                                <div class="carousel-item {% if photo.id == tof.id %} active {% endif %}">
+                                    <video class="video" src="{{ asset('assets/uploads/images_biens/' ~ photo.nom) }}" controls></video>
+                                </div>
+                            {% endif %}{% endfor %}
+                        </div>
+                        <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleIndicators-{{ tof.id }}" data-bs-slide="prev">
+                            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                            <span class="visually-hidden">Previous</span>
+                        </button>
+                        <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleIndicators-{{ tof.id }}" data-bs-slide="next">
+                            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                            <span class="visually-hidden">Next</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+
+{% endblock %}
+
+{% block script %}
+    <script>
+        const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
+        const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl))
+
+        function stopVideo() {
+            var media = $(".video").get(0);
+            media.pause();
+            media.currentTime = 0;
+        }
+    </script>
+{% endblock %}

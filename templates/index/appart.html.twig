@@ -1,0 +1,136 @@
+{% extends 'base.html.twig' %}
+
+{% block style %}
+    <style>
+        .search {
+            background: #fff url("{{ asset('assets/img/image001.png') }}") no-repeat center;
+            background-size: cover;
+            height: auto;
+        }
+        .search .message {
+            text-align: center;
+            color: #000;
+            font-size: 1.1em;
+        }
+        .search .message span {
+            font-size: 1.4em;
+            font-weight: bold;
+        }
+        div.search a.btn, div.search input.form-control, div.search select.form-select {
+            height: 2.3em !important;
+            font-size: 1.3em;
+            font-weight: 600 !important;
+        }
+        div.search button.btn-outline-secondary {
+            width: 100%;
+        }
+        div.kot div.row div.card img {
+            height: 20vh;
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+
+    <div class="start_page">
+        <div class="search mb-4 p-4">
+            <div class="message mt-3">
+                <span>Trouve ton logement en Belgique</span><br/>
+                pour étudiants, stagiaires et touristes
+            </div>
+            <div class="row my-4 gy-3">
+                <div class="col-md-3 col-sm-6 col-xs-6"><a href="{{ path('index.studio') }}" class="btn btn-outline-secondary d-block">Studios</a></div>
+                <div class="col-md-3 col-sm-6 col-xs-6"><a href="{{ path('index.chambre') }}" class="btn btn-outline-secondary d-block">Chambres</a></div>
+                <div class="col-md-3 col-sm-6 col-xs-6"><a href="{{ path('index.maison') }}" class="btn btn-outline-secondary d-block">Maisons</a></div>
+                <div class="col-md-3 col-sm-6 col-xs-6"><a href="{{ path('index.appart') }}" class="btn btn-outline-secondary d-block">Appartements</a></div>
+            </div>
+            <div class="row my-4 gy-3">
+                {#
+                <div class="col-md-3 col-sm-2 col-xs-12"><a href="{{ path('index.carte') }}"
+                                                            class="btn btn-outline-secondary d-block">Carte</a></div>
+                #}
+                {{ form_start(form, {attr: {'class': 'col-md-9 col-sm-10 col-xs-12'}} )}}
+                <div class="input-group">
+                    {{ form_widget(form.ville, {attr: {placeholder: 'Entrez une ville'}}) }} {{ form_errors(form.ville) }}
+                    {{ form_widget(form.prix, {attr: {placeholder: 'Entrez un prix'}}) }} {{ form_errors(form.prix) }}
+                    {{ form_widget(form.superficie, {attr: {placeholder: 'Entrez une superficie'}}) }} {{ form_errors(form.superficie) }}
+                    {{ form_widget(form.rechercher, {attr: {class: 'btn btn-secondary fw-bold'}}) }}
+                </div>
+                {{ form_end(form) }}
+            </div>
+        </div>
+
+        <div class="kot container">
+            <div class="row">
+                {% if nbre is defined %}
+                    <div class="col-md-3"></div>
+                    <div class="col-md-6 col-sm-12">
+                        {{ mess }}
+                    </div>
+                    <div class="col-md-3"></div>
+                {% else %}
+                    {% for studio in studios %}
+                        <div class="col-xl-3 col-lg-4 col-md-6 col-sm-12">
+                            <div class="card mx-auto my-3">
+                                <img src="{{ asset('assets/uploads/images_biens/' ~ studio.biens.photo) }}" class="bd-placeholder-img card-img-top" alt="{{ studio.biens.nom }}"/>
+                                <div class="card-body">
+                                    <h5 class="card-title">{{ studio.biens.nom }}</h5>
+                                    <p class="card-text">{{ studio.biens.adresse }}<br/>
+                                        Nombre de pièces : <b>{{ studio.nbrePieces }}</b>
+                                    </p>
+                                    <h6 class="card-subtitle text-muted">{{ studio.biens.superficie }} m² pour {{ studio.biens.prix}} &euro;</h6>
+                                    <a href="{{ path('biens.detail', {id: studio.biens.id})}}" class="btn btn-primary w-100 mt-3">Details</a>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            </div>
+            {% if page is defined %}
+                <nav aria-label="Page navigation example">
+                    <ul class="pagination">
+                        {% if page != 1 %}
+                            <li class="page-item">
+                                {% if query is defined %}
+                                    <a class="page-link" href="{{ path('index.search', {page: page-1, prix: prix, ville: ville, superficie: superficie, b: 2}) }}" aria-label="Previous"><span aria-hidden="true">&laquo;</span></a>
+                                {% else %}
+                                    <a class="page-link" href="{{ path('index.appart', {page: page-1}) }}" aria-label="Previous"><span aria-hidden="true">&laquo;</span></a>
+                                {% endif %}
+                            </li>
+                        {% endif %}
+                        {% if page == 1 %}
+                            <li class="page-item">
+                                <a class="page-link disabled" href="#"><span aria-hidden="true"> &laquo; </span></a>
+                            </li>
+                        {% endif %}
+                        {% for i in range(1, nbrePage) %}
+                            <li class="page-item {% if page==i %}active{% endif %}">
+                            {% if query is defined %}
+                                <a class="page-link" href="{{ path('index.search', {page: i, prix: prix, ville: ville, superficie: superficie, b: 2}) }}">{{ i }}</a>
+                            {% else %}
+                                <a class="page-link" href="{{ path('index.appart', {page: i}) }}">{{ i }}</a>
+                            {% endif %}
+                            </li>
+                        {% endfor %}
+
+                        {% if page == nbrePage %}
+                            <li class="page-item">
+                                <a class="page-link disabled" href="#"><span aria-hidden="true">&raquo;</span></a>
+                            </li>
+                        {% endif %}
+                        {% if page != nbrePage %}
+                            <li class="page-item">
+                                {% if query is defined %}
+                                    <a class="page-link" href="{{ path('index.search', {page: page+1, prix: prix, ville: ville, superficie: superficie, b: 2}) }}" aria-label="Next"><span aria-hidden="true">&raquo;</span></a>
+                                {% else %}
+                                    <a class="page-link" href="{{ path('index.appart', {page: page+1}) }}" aria-label="Next"><span aria-hidden="true">&raquo;</span></a>
+                                {% endif %}
+                            </li>
+                        {% endif %}
+                    </ul>
+                </nav>
+            {% endif %}
+        </div>
+    </div>
+
+{% endblock %}

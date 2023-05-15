@@ -1,0 +1,39 @@
+{% extends 'base.html.twig' %}
+
+{% block title %} Inscription - Franck Immo {% endblock %}
+
+{% block style %}
+    <style>
+        #eye-addon, .form-check-label {
+            cursor: pointer;
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+    <div class="container-md mx-auto ">
+        <div class="card mx-auto">
+            <div class="card-header">
+                <h1 class="mb-3 fw-bold text-center">Inscrivez-vous</h1>
+            </div>
+            {{ include('security/_form.html.twig') }}
+        </div>
+    </div>
+{% endblock %}
+{% block script %}
+    <script>
+        function togglePass() {
+            let $pass = $('#utilisateur_password'), $eye = $('#eyeCon');
+            if ($eye.hasClass('fa-eye')) {
+                $eye.removeClass('fa-eye')
+                $eye.addClass('fa-eye-slash')
+                $pass.attr('type', 'text')
+            }
+            else {
+                $eye.removeClass('fa-eye-slash')
+                $eye.addClass('fa-eye')
+                $pass.attr('type', 'password')
+            }
+        }
+    </script>
+{% endblock %}
