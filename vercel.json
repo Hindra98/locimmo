@@ -1,9 +1,17 @@
 {
   "version": 2,
   "builds": [
-    { "src": "index.php", "use": "@vercel/php" }
+    { "src": "public/index.php", "use": "@vercel/php" }
   ],
   "routes": [
-    { "src": "/(.*)", "dest": "/$1" }
-  ]
+    { "src": "/(.*)", "dest": "public/index.php" }
+  ],
+  "build": {
+    "env": {
+      "APP_ENV": "prod"
+    },
+    "commands": {
+      "postdeploy": "php bin/console doctrine:migrations:migrate --no-interaction"
+    }
+  }
 }
