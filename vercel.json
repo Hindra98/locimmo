@@ -5,13 +5,5 @@
   ],
   "routes": [
     { "src": "/(.*)", "dest": "public/index.php" }
-  ],
-  "build": {
-    "env": {
-      "APP_ENV": "prod"
-    },
-    "commands": {
-      "postdeploy": "php bin/console doctrine:migrations:migrate --no-interaction"
-    }
-  }
+  ]
 }
